@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NPR ↔ SAR Currency Converter</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f4f6fb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: #1a1a1a;
+    }
+
+    .converter-wrap {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .page-heading {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-heading h1 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .page-heading p {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .converter-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      padding: 2rem;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .flag-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 0.75rem;
+    }
+
+    .flag { font-size: 30px; }
+
+    .arrow-icon {
+      color: #9ca3af;
+      font-size: 20px;
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .rate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: #15803d;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    .rate-dot {
+      width: 7px;
+      height: 7px;
+      background: #16a34a;
+      border-radius: 50%;
+    }
+
+    .field-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .input-row:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    }
+
+    .currency-tag {
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      background: #f9fafb;
+      border-right: 1px solid #e5e7eb;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .currency-tag.right {
+      border-right: none;
+      border-left: 1px solid #e5e7eb;
+    }
+
+    input[type="number"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 0 14px;
+      height: 46px;
+      font-size: 16px;
+      color: #111827;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    .swap-btn-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 0.4rem 0 1rem;
+    }
+
+    .swap-btn {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #6b7280;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      font-size: 18px;
+    }
+
+    .swap-btn:hover {
+      background: #e5e7eb;
+      border-color: #d1d5db;
+      color: #111827;
+    }
+
+    .swap-btn:active { transform: scale(0.95); }
+
+    .convert-btn {
+      width: 100%;
+      margin-top: 1.25rem;
+      height: 46px;
+      background: #1d4ed8;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    .convert-btn:hover { background: #1e40af; }
+    .convert-btn:active { transform: scale(0.98); }
+
+    .result-card {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .result-label {
+      font-size: 13px;
+      color: #3b82f6;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 30px;
+      font-weight: 700;
+      color: #1e3a8a;
+      letter-spacing: -0.5px;
+    }
+
+    .result-sub {
+      font-size: 12px;
+      color: #60a5fa;
+      margin-top: 5px;
+    }
+
+    hr.divider {
+      border: none;
+      border-top: 1px solid #f3f4f6;
+      margin: 1.5rem 0;
+    }
+
+    .rate-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .rate-box {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e5e7eb;
+    }
+
+    .rate-box-label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .rate-box-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 1.25rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 500px) {
+      .converter-card { padding: 1.5rem 1.25rem; }
+      .result-value { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="converter-wrap">
+    <div class="page-heading">
+      <h1>Currency Converter</h1>
+      <p>Nepali Rupee &amp; Saudi Riyal</p>
+    </div>
+
+    <div class="converter-card">
+      <div class="card-header">
+        <div class="flag-row">
+          <span class="flag" id="flag-from">🇳🇵</span>
+          <i class="ti ti-arrow-right arrow-icon" aria-hidden="true"></i>
+          <span class="flag" id="flag-to">🇸🇦</span>
+        </div>
+        <div class="card-title" id="card-title">Nepali Rupee → Saudi Riyal</div>
+        <div class="card-subtitle">Exchange rate converter</div>
+        <div class="rate-badge">
+          <span class="rate-dot"></span>
+          <span id="live-rate-text">1 NPR = 0.02826 SAR</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label id="from-label">Amount in NPR</label>
+        <div class="input-row">
+          <span class="currency-tag" id="from-tag">NPR ₨</span>
+          <input type="number" id="from-input" value="1000" min="0" step="any" placeholder="0" />
+        </div>
+      </div>
+
+      <div class="swap-btn-wrap">
+        <button class="swap-btn" id="swap-btn" title="Swap currencies" aria-label="Swap currencies">
+          <i class="ti ti-arrows-exchange" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="field-group">
+        <label id="to-label">Converted to SAR</label>
+        <div class="input-row">
+          <span class="currency-tag" id="to-tag">SAR ﷼</span>
+          <input type="number" id="to-input" value="" min="0" step="any" placeholder="0" readonly style="color:#6b7280; cursor: default;" />
+        </div>
+      </div>
+
+      <button class="convert-btn" id="convert-btn">
+        <i class="ti ti-refresh" aria-hidden="true"></i> Convert
+      </button>
+
+      <div class="result-card">
+        <div class="result-label" id="result-label">1,000 NPR equals</div>
+        <div class="result-value" id="result-value">28.26 SAR</div>
+        <div class="result-sub" id="result-sub">Saudi Riyal</div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="rate-info">
+        <div class="rate-box">
+          <div class="rate-box-label" id="rate1-label">1 NPR =</div>
+          <div class="rate-box-val" id="rate1-val">0.02826 SAR</div>
+        </div>
+        <div class="rate-box">
+          <div class="rate-box-label" id="rate2-label">1 SAR =</div>
+          <div class="rate-box-val" id="rate2-val">35.39 NPR</div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        Reference rate: 1 NPR ≈ 0.02826 SAR &nbsp;|&nbsp; Rates may vary. For reference only.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const RATE_NPR_TO_SAR = 0.02826;
+    let mode = 'NPR_TO_SAR';
+
+    const fromInput = document.getElementById('from-input');
+    const toInput = document.getElementById('to-input');
+    const resultValue = document.getElementById('result-value');
+    const resultLabel = document.getElementById('result-label');
+    const resultSub = document.getElementById('result-sub');
+    const fromLabel = document.getElementById('from-label');
+    const toLabel = document.getElementById('to-label');
+    const fromTag = document.getElementById('from-tag');
+    const toTag = document.getElementById('to-tag');
+    const cardTitle = document.getElementById('card-title');
+    const flagFrom = document.getElementById('flag-from');
+    const flagTo = document.getElementById('flag-to');
+    const liveRateText = document.getElementById('live-rate-text');
+    const rate1Label = document.getElementById('rate1-label');
+    const rate1Val = document.getElementById('rate1-val');
+    const rate2Label = document.getElementById('rate2-label');
+    const rate2Val = document.getElementById('rate2-val');
+
+    function fmt(n, d = 2) {
+      return n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+
+    function convert() {
+      const val = parseFloat(fromInput.value) || 0;
+      let result;
+      if (mode === 'NPR_TO_SAR') {
+        result = val * RATE_NPR_TO_SAR;
+        toInput.value = fmt(result);
+        resultLabel.textContent = fmt(val, 2) + ' NPR equals';
+        resultValue.textContent = fmt(result) + ' SAR';
+        resultSub.textContent = 'Saudi Riyal';
+      } else {
+        result = val / RATE_NPR_TO_SAR;
+        toInput.value = fmt(result);
+        resultLabel.textContent = fmt(val, 2) + ' SAR equals';
+        resultValue.textContent = fmt(result) + ' NPR';
+        resultSub.textContent = 'Nepali Rupee';
+      }
+    }
+
+    function setMode(m) {
+      mode = m;
+      if (m === 'NPR_TO_SAR') {
+        flagFrom.textContent = '🇳🇵';
+        flagTo.textContent = '🇸🇦';
+        cardTitle.textContent = 'Nepali Rupee → Saudi Riyal';
+        fromLabel.textContent = 'Amount in NPR';
+        toLabel.textContent = 'Converted to SAR';
+        fromTag.textContent = 'NPR ₨';
+        toTag.textContent = 'SAR ﷼';
+        liveRateText.textContent = '1 NPR = 0.02826 SAR';
+        rate1Label.textContent = '1 NPR =';
+        rate1Val.textContent = '0.02826 SAR';
+        rate2Label.textContent = '1 SAR =';
+        rate2Val.textContent = '35.39 NPR';
+      } else {
+        flagFrom.textContent = '🇸🇦';
+        flagTo.textContent = '🇳🇵';
+        cardTitle.textContent = 'Saudi Riyal → Nepali Rupee';
+        fromLabel.textContent = 'Amount in SAR';
+        toLabel.textContent = 'Converted to NPR';
+        fromTag.textContent = 'SAR ﷼';
+        toTag.textContent = 'NPR ₨';
+        liveRateText.textContent = '1 SAR = 35.39 NPR';
+        rate1Label.textContent = '1 SAR =';
+        rate1Val.textContent = '35.39 NPR';
+        rate2Label.textContent = '1 NPR =';
+        rate2Val.textContent = '0.02826 SAR';
+      }
+      convert();
+    }
+
+    document.getElementById('swap-btn').addEventListener('click', () => {
+      const prevTo = toInput.value.replace(/,/g, '');
+      fromInput.value = prevTo || '';
+      setMode(mode === 'NPR_TO_SAR' ? 'SAR_TO_NPR' : 'NPR_TO_SAR');
+    });
+
+    document.getElementById('convert-btn').addEventListener('click', convert);
+    fromInput.addEventListener('input', convert);
+
+    convert();
+  </script>
+</body>
+</html>
